@@ -3,7 +3,6 @@
 import dotenv from 'dotenv';
 import express from "express";
 import { MongoClient } from "mongodb";
-import { getMovies, createMovies, getMovieByID, deleteMovieByID, updateMovieByID } from './helper.js';
 import { moviesRouter } from './routes/movies.js';
 
 
