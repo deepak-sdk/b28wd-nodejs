@@ -28,7 +28,7 @@ import express from "express";
 
 const router = express.Router();
 
-router.get("/movies", async (req, res) => {
+router.get("/", async (req, res) => {
   console.log(req.query);
   const filter = req.query;
   console.log(filter);
@@ -58,7 +58,7 @@ router.get("/movies", async (req, res) => {
 });
 
 // Create
-router.post("/movies", async (req, res) => {
+router.post("/", async (req, res) => {
   const data = req.body;
   console.log(data);
   //  Create movies in mongo - db.movies.insertMany(data)
@@ -67,7 +67,7 @@ router.post("/movies", async (req, res) => {
 });
 
 // capturing id using find
-router.get("/movies/:id", async (req, res) => {
+router.get("/:id", async (req, res) => {
   console.log(req.params);
   const { id } = req.params;
 
@@ -79,7 +79,7 @@ router.get("/movies/:id", async (req, res) => {
 });
 
 // delete
-router.delete("/movies/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
   const { id } = req.params;
 
   // db.movies.deleteOne({key:value})
@@ -92,7 +92,7 @@ router.delete("/movies/:id", async (req, res) => {
 });
 
 // Edit
-router.put("/movies/:id", async (req, res) => {
+router.put("/:id", async (req, res) => {
   const { id } = req.params;
   const data = req.body;
 
