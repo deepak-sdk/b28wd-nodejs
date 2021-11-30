@@ -1,7 +1,11 @@
 // module wont support require // const express = require("express");
 
+import dotenv from 'dotenv';
 import express from "express";
 import { MongoClient } from "mongodb";
+
+
+dotenv.config() // all keys stored in process.env
 
 const app = express();
 
@@ -11,9 +15,9 @@ const PORT = 9000;
 app.use(express.json()); //every request in app convert into json
 // express.json() - inbuild middleware
 
-
 // MongoDB Connection
-const MONGO_URL = "mongodb://localhost";
+const MONGO_URL = process.env.MONGO_URL;
+
 
 async function createConnection() {
   const client = new MongoClient(MONGO_URL);
@@ -55,7 +59,6 @@ app.get("/", (req, res) => {
 // });
 
 app.get("/movies", async (req, res) => {
-  // request => query params
   console.log(req.query);
   const filter = req.query;
   console.log(filter);
@@ -84,18 +87,23 @@ app.get("/movies", async (req, res) => {
   filteredMovies && res.send(filteredMovies);
 });
 
+// Create
 app.post("/movies", async (req, res) => {
+
+
   const data = req.body;
   console.log(data);
   //  Create movies in mongo - db.movies.insertMany(data)
   const result = await createMovies(data)
   res.send(result);
+
 });
 
 // capturing id using find
 app.get("/movies/:id", async (req, res)=> {
   console.log(req.params);
   const { id } = req.params;
+
   // db.movies.findOne({key:value})
   const movie = await getMovieByID(id)
   // const movie = movies.find((mv) => mv.id === id);
@@ -126,15 +134,44 @@ app.put("/movies/:id", async (req, res) => {
   const movie = await getMovieByID(id)
 
   console.log(movie);
- res.send(movie);
+  movie ? res.send(movie) : res.status(404).send({ message: "NOT FOUND" });
+
 });
 
 app.listen(PORT, () => {
   console.log("App Started", PORT);
 });
 
+// Node converts JS object to JSON.Stringify
+
 // nodemon run only on development
 // npm install --save-dev nodemon
 // "start": "node index.js",
 // "dev": "nodemon index.js",
 // npm run dev
+
+
+
+async function updateMovieByID(id, data) {
+  return await client
+    .db("b28wd")
+    .collection("movies")
+    .updateOne({ id: id }, { $set: data });
+}
+
+
+async function deleteMovieByID(id) {
+  return await client.db("b28wd").collection("movies").deleteOne({ id: id });
+}
+
+async function getMovieByID(id) {
+  return await client.db("b28wd").collection("movies").findOne({ id: id });
+}
+
+async function getMovies(filter) {
+  return await client.db("b28wd").collection("movies").find(filter).toArray(); //  cursor to array
+}
+
+async function createMovies(data) {
+  return await client.db("b28wd").collection("movies").insertMany(data);
+}
