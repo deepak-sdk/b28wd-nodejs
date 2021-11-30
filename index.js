@@ -10,8 +10,8 @@ dotenv.config() // all keys stored in process.env
 
 const app = express();
 
-const PORT = 9000;
-
+const PORT = +(process.env.PORT); //herokku will auto assign port 
+// console.log(process.env)
 // middleware
 app.use(express.json()); //every request in app convert into json
 // express.json() - inbuild middleware
