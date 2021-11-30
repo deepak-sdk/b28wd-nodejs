@@ -3,6 +3,7 @@
 import dotenv from 'dotenv';
 import express from "express";
 import { MongoClient } from "mongodb";
+import { getMovies, createMovies, getMovieByID, deleteMovieByID, updateMovieByID } from './helper.js';
 
 
 dotenv.config() // all keys stored in process.env
@@ -26,7 +27,7 @@ async function createConnection() {
   return client;
 }
 
-const client = await createConnection();
+export const client = await createConnection();
 
 app.get("/", (req, res) => {
   res.send("Hello World😀😄");
@@ -142,36 +143,9 @@ app.listen(PORT, () => {
   console.log("App Started", PORT);
 });
 
-// Node converts JS object to JSON.Stringify
 
 // nodemon run only on development
 // npm install --save-dev nodemon
 // "start": "node index.js",
 // "dev": "nodemon index.js",
 // npm run dev
-
-
-
-async function updateMovieByID(id, data) {
-  return await client
-    .db("b28wd")
-    .collection("movies")
-    .updateOne({ id: id }, { $set: data });
-}
-
-
-async function deleteMovieByID(id) {
-  return await client.db("b28wd").collection("movies").deleteOne({ id: id });
-}
-
-async function getMovieByID(id) {
-  return await client.db("b28wd").collection("movies").findOne({ id: id });
-}
-
-async function getMovies(filter) {
-  return await client.db("b28wd").collection("movies").find(filter).toArray(); //  cursor to array
-}
-
-async function createMovies(data) {
-  return await client.db("b28wd").collection("movies").insertMany(data);
-}
