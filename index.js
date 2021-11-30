@@ -58,9 +58,9 @@ app.get("/movies", async (req, res) => {
   // request => query params
   console.log(req.query);
   const filter = req.query;
-  console.log(filter)
+  console.log(filter);
   if (filter.rating) {
-    filter.rating = +(filter.rating)
+    filter.rating = +filter.rating;
   }
   // db.movies.find({language:"English"})
 
@@ -77,42 +77,57 @@ app.get("/movies", async (req, res) => {
 
   // db.movies.find({})
 
-  const filteredMovies = await client
-    .db("b28wd")
-    .collection("movies")
-    .find(filter)
-    .toArray(); //  cursor to array
+  const filteredMovies = await getMovies(filter)
 
   console.log(filteredMovies);
 
-  filteredMovies
-    ? res.send(filteredMovies)
-    : res.status(404).send({ message: "NOT FOUND" });
+  filteredMovies && res.send(filteredMovies);
 });
 
 app.post("/movies", async (req, res) => {
   const data = req.body;
   console.log(data);
   //  Create movies in mongo - db.movies.insertMany(data)
-  const result = await client.db("b28wd").collection("movies").insertMany(data);
+  const result = await createMovies(data)
   res.send(result);
 });
 
 // capturing id using find
-app.get("/movies/:id", async (req, res) => {
+app.get("/movies/:id", async (req, res)=> {
   console.log(req.params);
   const { id } = req.params;
   // db.movies.findOne({key:value})
-  const movie = await client
-    .db("b28wd")
-    .collection("movies")
-    .findOne({ id: id });
+  const movie = await getMovieByID(id)
   // const movie = movies.find((mv) => mv.id === id);
   console.log(movie);
   movie ? res.send(movie) : res.status(404).send({ message: "NOT FOUND" });
 });
 
-// Node converts JS object to JSON.Stringify
+// delete
+app.delete("/movies/:id", async (req, res)=> {
+  const { id } = req.params;
+
+  // db.movies.deleteOne({key:value})
+  const remainingMovies = await deleteMovieByID(id)
+
+  console.log(remainingMovies);
+  remainingMovies.deletedCount > 0
+    ? res.send(remainingMovies)
+    : res.status(404).send({ message: "NOT FOUND" });
+});
+
+// Edit
+app.put("/movies/:id", async (req, res) => {
+  const { id } = req.params;
+  const data = req.body;
+
+  // db.movies.updateOne({key:value},, { $set: data })
+  const updatedMovie = await updateMovieByID(id, data)
+  const movie = await getMovieByID(id)
+
+  console.log(movie);
+ res.send(movie);
+});
 
 app.listen(PORT, () => {
   console.log("App Started", PORT);
