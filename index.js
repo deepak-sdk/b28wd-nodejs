@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import express from "express";
 import { MongoClient } from "mongodb";
 import { moviesRouter } from './routes/movies.js';
+import cors from 'cors';
 
 
 dotenv.config() // all keys stored in process.env
@@ -12,7 +13,11 @@ const app = express();
 
 const PORT = +(process.env.PORT); //herokku will auto assign port 
 // console.log(process.env)
+
+
 // middleware
+
+app.use(cors())//every request in app allowed to access any origin 
 app.use(express.json()); //every request in app convert into json
 // express.json() - inbuild middleware
 
