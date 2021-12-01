@@ -6,7 +6,7 @@ async function updateMovieByID(id, data) {
   return await client
     .db("b28wd")
     .collection("movies")
-    .updateOne({ id: id }, { $set: data });
+    .updateOne({ _id: ObjectId(id) }, { $set: data });
 }
 async function deleteMovieByID(id) {
   return await client.db("b28wd").collection("movies").deleteOne({ _id: ObjectId(id) });
