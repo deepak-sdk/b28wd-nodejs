@@ -19,7 +19,7 @@ async function getMovies(filter) {
   return await client.db("b28wd").collection("movies").find(filter).toArray(); //  cursor to array
 }
 async function createMovies(data) {
-  return await client.db("b28wd").collection("movies").insertMany(data);
+  return await client.db("b28wd").collection("movies").insertOne(data);
 }
 
 export {
